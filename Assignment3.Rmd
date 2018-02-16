@@ -1,0 +1,89 @@
+---
+title: "DATA 607 - Assignment3 [R Character Manipulation]"
+author: "Simon63"
+date: "February 15, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###Package Installs (optional)
+library("stringr")
+library("htmlwidgets")
+
+### Libraries
+```{r libraries, warning=FALSE, message=FALSE}
+library("stringr")
+library("htmlwidgets")
+```
+
+```{r}
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert";
+writeLines(raw.data)
+name <- unlist(str_extract_all(raw.data, "[[:alpha:]., ]{2,}"))
+name
+
+```
+
+###Problem 3.1
+####Use the tools of this chapter to rearrange the [above] vector so that all elements conform to the standard first_name last_name.
+***
+```{r}
+str_view(name, '^([[:alpha:]]*\\. )?')
+str_view(name, ',([ [:alpha:]]*\\.)?')
+str_replace(name, '^([[:alpha:]]*\\. )?', '') %>% str_replace(pattern = ',([ [:alpha:]]*\\.)?', replacement =  '')
+```
+***
+
+###Problem 3.2
+####Construct a logical vector indicating whether a character has a title (i.e., Rev. and Dr.).
+***
+```{r}
+str_detect(name, '^([[:alpha:]]*\\. )')
+data.frame(names=name, has_title=str_detect(name, '^([[:alpha:]]*\\. )'))
+```
+***
+
+###Problem 3.3
+####Construct a logical vector indicating whether a character has a second name.
+***
+```{r}
+str_detect(name, ',([ [:alpha:]]*\\.)?')
+data.frame(names=name, has_2nd_name=str_detect(name, ',([ [:alpha:]]*\\.)'))
+```
+***
+###Problem 4
+####Describe the types of strings that conform to the following regular expressions and construct an example that is matched by the regular expression.
+1. [0-9]+\\\\$  
+**One or more digits ending with a "$" sign**
+```{r}
+str_view_all("2342$ abc$ 32$ abc4$", '[0-9]+\\$')
+```
+
+2. \\\\b[a-z]{1,4}\\\\b  
+**Lower case words up to 4 characters long** 
+```{r}
+str_view_all("asdfs ABC a alsd dk asd sldkfss asdf asd 232 232asd abc2", "\\b[a-z]{1,4}\\b")
+```
+
+3. .*?\\\\.txt$  
+**Any string ending with ".txt" - R applies greedy quantification**
+```{r}
+str_view_all("as\\xyz912-s9d\abc.asdfsd.txt txt TXT abc.TXT .txt a.txt.abc abc.txt.xyz.txt", ".*?\\.txt$")
+```
+
+4. \\\\d{2}/\\\\d{2}/\\\\d{4}  
+**a string in the format of dd/dd/dddd - matching date in MM/DD/YYYY format for example**
+```{r}
+str_view_all("12/54/9493 234/1/4359 4/43/2232 02/15/2018", "\\d{2}/\\d{2}/\\d{4}")
+```
+
+5. <(.+?)>.+?</\\\\1>  
+**a string which is a content of an XML element**
+```{r}
+str_view_all("<abc>xyz</abc> <tag>abc</tag>", "<(.+?)>.+?</\\1>")
+```
+
+***
